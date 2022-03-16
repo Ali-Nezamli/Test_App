@@ -1,5 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+pageRoute(Widget page) {
+  return MaterialPageRoute(builder: (context) {
+    return page;
+  });
+}
 
 double screenHeight(BuildContext context) {
   return MediaQuery.of(context).size.height;
@@ -11,5 +16,5 @@ double screenWidth(BuildContext context) {
 
 showSnackBar(BuildContext context, String message) {
   return ScaffoldMessenger.of(context)
-      .showSnackBar(SnackBar(content: Text('email or password incorrect')));
+      .showSnackBar(SnackBar(content: Text(message)));
 }

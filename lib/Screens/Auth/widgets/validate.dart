@@ -1,5 +1,7 @@
 requiredField(String value) {
-  return 'Required field';
+  if (value.isEmpty) {
+    return 'Required field';
+  }
 }
 
 passwordValidate(String value) {

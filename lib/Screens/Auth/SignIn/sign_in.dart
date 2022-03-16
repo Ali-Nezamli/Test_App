@@ -4,6 +4,7 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:testapp/Screens/Auth/bloc/signin_bloc.dart';
 import 'package:testapp/Screens/Auth/widgets/custom_text_form_field.dart';
 import 'package:testapp/Screens/Auth/widgets/validate.dart';
+import 'package:testapp/Screens/Home/page/home.dart';
 import 'package:testapp/Theme/theme.dart';
 import 'package:testapp/constants.dart';
 
@@ -18,6 +19,7 @@ class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
   final _bloc = SigninBloc();
   bool loading = false;
+  String? userEmail, userPassword;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class _SignInPageState extends State<SignInPage> {
         if (state is Loading) {
           loading = true;
         } else if (state is SigninSuccess) {
-          print('Sign in Success');
+          Navigator.pushReplacement(context, pageRoute(const HomePage()));
         } else if (state is SignInUnauthorized) {
           showSnackBar(context, 'email or password incorrect');
         } else if (state is Error) {
@@ -41,40 +43,51 @@ class _SignInPageState extends State<SignInPage> {
             child: Scaffold(
               body: Form(
                 key: _formKey,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: screenWidth(context) * 0.05,
-                        vertical: screenHeight(context) * 0.1,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: screenWidth(context) * 0.05,
+                          vertical: screenHeight(context) * 0.1,
+                        ),
+                        child: Text(
+                          'Sign In',
+                          style: Apptheme.themeData.textTheme.headline1,
+                        ),
                       ),
-                      child: Text(
-                        'Sign In',
-                        style: Apptheme.themeData.textTheme.headline1,
+                      CustomTextFormField(
+                        title: 'Email',
+                        onChanged: (value) {
+                          userEmail = value;
+                        },
+                        hint: 'Email',
+                        validator: (value) {
+                          return requiredField(value!);
+                        },
                       ),
-                    ),
-                    CustomTextFormField(
-                      title: 'Email',
-                      onChanged: (value) {},
-                      hint: 'Email',
-                      validator: (value) {
-                        return requiredField(value!);
-                      },
-                    ),
-                    CustomTextFormField(
-                      title: 'Password',
-                      hint: 'Password',
-                      onChanged: (value) {},
-                      validator: (value) {
-                        return passwordValidate(value!);
-                      },
-                    ),
-                    _signInButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {}
-                      },
-                    ),
-                  ],
+                      CustomTextFormField(
+                        title: 'Password',
+                        hint: 'Password',
+                        onChanged: (value) {
+                          userPassword = value;
+                        },
+                        validator: (value) {
+                          return passwordValidate(value!);
+                        },
+                      ),
+                      _signInButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _bloc.add(UserSignInEvent(
+                              userEmail: userEmail!,
+                              userPassword: userPassword!,
+                            ));
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
