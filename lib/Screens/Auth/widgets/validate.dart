@@ -1,6 +1,8 @@
-requiredField(String value) {
-  if (value.isEmpty) {
-    return 'Required field';
+import 'package:validators/validators.dart';
+
+emailValidate(String value) {
+  if (!isEmail(value)) {
+    return 'Enter valid email';
   }
 }
 

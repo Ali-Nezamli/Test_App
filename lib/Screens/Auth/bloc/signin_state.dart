@@ -11,6 +11,12 @@ class SigninSuccess extends SigninState {}
 
 class SignInUnauthorized extends SigninState {}
 
+class GoogleSignInSuccess extends SigninState {
+  final GoogleSignInAccount userData;
+
+  GoogleSignInSuccess(this.userData);
+}
+
 class Error extends SigninState {
   final String exception;
 

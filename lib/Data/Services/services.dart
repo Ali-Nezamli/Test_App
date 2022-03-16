@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
@@ -35,6 +36,17 @@ class HttpServices {
     } on SocketException catch (e) {
       print(e);
       rethrow;
+    }
+  }
+
+  static Future<GoogleSignInAccount?> googleSignIn() async {
+    try {
+      final GoogleSignIn _googleSignIn = GoogleSignIn();
+      GoogleSignInAccount? results = await _googleSignIn.signIn();
+      print(results);
+      return results;
+    } catch (error) {
+      print(error);
     }
   }
 }

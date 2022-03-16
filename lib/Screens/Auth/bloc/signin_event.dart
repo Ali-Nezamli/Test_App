@@ -9,3 +9,5 @@ class UserSignInEvent extends SigninEvent {
 
   UserSignInEvent({required this.userEmail, required this.userPassword});
 }
+
+class GoolgeSignInEvent extends SigninEvent {}
