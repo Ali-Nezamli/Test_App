@@ -37,6 +37,7 @@ class HttpServices {
       print(e);
       rethrow;
     }
+    return null;
   }
 
   static Future<GoogleSignInAccount?> googleSignIn() async {
@@ -48,5 +49,6 @@ class HttpServices {
     } catch (error) {
       print(error);
     }
+    return null;
   }
 }
