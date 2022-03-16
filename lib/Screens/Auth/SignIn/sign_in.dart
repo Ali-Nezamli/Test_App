@@ -1,55 +1,86 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:testapp/Screens/Auth/bloc/signin_bloc.dart';
 import 'package:testapp/Screens/Auth/widgets/custom_text_form_field.dart';
 import 'package:testapp/Screens/Auth/widgets/validate.dart';
 import 'package:testapp/Theme/theme.dart';
 import 'package:testapp/constants.dart';
 
-class SignInPage extends StatelessWidget {
-  SignInPage({Key? key}) : super(key: key);
+class SignInPage extends StatefulWidget {
+  const SignInPage({Key? key}) : super(key: key);
+
+  @override
+  State<SignInPage> createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
+  final _bloc = SigninBloc();
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth(context) * 0.05,
-                  vertical: screenHeight(context) * 0.1,
+    return BlocConsumer(
+      bloc: _bloc,
+      listener: (context, state) {
+        if (state is Loading) {
+          loading = true;
+        } else if (state is SigninSuccess) {
+          print('Sign in Success');
+        } else if (state is SignInUnauthorized) {
+          showSnackBar(context, 'email or password incorrect');
+        } else if (state is Error) {
+          showSnackBar(context, state.exception);
+        }
+      },
+      builder: (context, state) {
+        return ModalProgressHUD(
+          inAsyncCall: loading,
+          child: SafeArea(
+            child: Scaffold(
+              body: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenWidth(context) * 0.05,
+                        vertical: screenHeight(context) * 0.1,
+                      ),
+                      child: Text(
+                        'Sign In',
+                        style: Apptheme.themeData.textTheme.headline1,
+                      ),
+                    ),
+                    CustomTextFormField(
+                      title: 'Email',
+                      onChanged: (value) {},
+                      hint: 'Email',
+                      validator: (value) {
+                        return requiredField(value!);
+                      },
+                    ),
+                    CustomTextFormField(
+                      title: 'Password',
+                      hint: 'Password',
+                      onChanged: (value) {},
+                      validator: (value) {
+                        return passwordValidate(value!);
+                      },
+                    ),
+                    _signInButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {}
+                      },
+                    ),
+                  ],
                 ),
-                child: Text(
-                  'Sign In',
-                  style: Apptheme.themeData.textTheme.headline1,
-                ),
               ),
-              CustomTextFormField(
-                title: 'Email',
-                onChanged: (value) {},
-                hint: 'Email',
-                validator: (value) {
-                  return requiredField(value!);
-                },
-              ),
-              CustomTextFormField(
-                title: 'Password',
-                hint: 'Password',
-                onChanged: (value) {},
-                validator: (value) {
-                  return passwordValidate(value!);
-                },
-              ),
-              _signInButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {}
-                },
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
